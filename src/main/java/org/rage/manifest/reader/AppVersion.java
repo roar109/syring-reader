@@ -4,9 +4,10 @@ import javax.servlet.http.HttpServlet;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class AppVersion  extends HttpServlet{
 	   private static final transient Set <String> m_propertyList;
 	   private static final String                 SHOW_JAR_FILES_PARAM     = "showJarFiles";
 	   private static final String                 VIEW_XML_PARAM           = "viewXml";
+	   private static final String PATH_SEPARATOR = System.getProperty("file.separator");
 
 	   static
 	   {
@@ -56,7 +58,7 @@ public class AppVersion  extends HttpServlet{
 	   @Override
 	   protected final void doGet (final HttpServletRequest request, final HttpServletResponse response)
 	   {
-	      exceute (request, response);
+	      execute (request, response);
 	   }
 
 
@@ -68,7 +70,7 @@ public class AppVersion  extends HttpServlet{
 	   @Override
 	   protected final void doPost (final HttpServletRequest request, final HttpServletResponse response)
 	   {
-	      exceute (request, response);
+		   execute (request, response);
 	   }
 
 
@@ -78,7 +80,7 @@ public class AppVersion  extends HttpServlet{
 	    * @param request - servlet request
 	    * @param response - servlet response
 	    */
-	   protected final void exceute (final HttpServletRequest request, final HttpServletResponse response)
+	   protected final void execute (final HttpServletRequest request, final HttpServletResponse response)
 	   {
 	      PrintWriter _out = null;
 	      final Formatter _formatter = getFormatter (request);
@@ -88,14 +90,12 @@ public class AppVersion  extends HttpServlet{
 	         _out.write (_formatter.startContent ());
 
 	         final String _basePath = request.getSession ().getServletContext ().getRealPath ("/");
-	         final String _warManifest = "file://" + _basePath + "/META-INF/MANIFEST.MF";
-	         final Manifest _manifest = new Manifest (new URL (_warManifest).openStream ());
-
-	         if (m_log.isDebugEnabled ())
-	         {
-	            m_log.debug ("URL to manifest is: " + _warManifest);
-	            m_log.debug ("mainfest " + _manifest);
-	         }
+	         final String _warManifest = _basePath + "META-INF"+PATH_SEPARATOR+"MANIFEST.MF";
+	         m_log.debug ("URL to manifest is: " + _warManifest);
+	         InputStream is = new FileInputStream(new File(_warManifest));
+	         final Manifest _manifest = new Manifest (is);
+	         m_log.debug ("mainfest " + _manifest);
+	         
 	         printManifestInfo (_manifest, "WAR manifest", _out, _formatter);
 
 	         final String _showJarFiles = request.getParameter (SHOW_JAR_FILES_PARAM);
@@ -139,7 +139,7 @@ public class AppVersion  extends HttpServlet{
 	   private void showJarFileManifestInfo (final String baseDir, final PrintWriter printWriter, final Formatter formatter)
 	         throws IOException
 	   {
-	      final File _file = new File (baseDir + "/WEB-INF/lib");
+	      final File _file = new File (baseDir + PATH_SEPARATOR+"WEB-INF"+PATH_SEPARATOR+"lib");
 	      if (_file.isDirectory ())
 	      {
 	         JarFile _jar;
