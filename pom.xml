@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.rage.manifest</groupId>
@@ -36,4 +37,37 @@
 		</dependency>
 
 	</dependencies>
+	
+	<organization>
+		<name>Rage</name>
+		<url>http://rageco.info</url>
+	</organization>
+	
+	<build>
+		<plugins>
+			<!-- JAR Manifest Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Build-Operating-System>${os.name}</Build-Operating-System>
+							<Build-Operating-System-Architecture>${os.arch}</Build-Operating-System-Architecture>
+							<Build-Operating-System-Version>${os.version}</Build-Operating-System-Version>
+							<Built-By>${user.name}</Built-By>
+							<Build-Directory>${project.build.directory}</Build-Directory>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+							<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
