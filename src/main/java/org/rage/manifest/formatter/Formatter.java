@@ -1,9 +1,5 @@
 package org.rage.manifest.formatter;
 
-
-
-import java.util.List;
-
 import org.rage.manifest.model.Manifest;
 
 

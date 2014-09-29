@@ -22,7 +22,7 @@ public class HtmlFormatter implements Formatter
     * 
     * @return opening html and body tags
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#startContent()
+    * @see org.rage.manifest.Formatter#startContent()
     */
    public String startContent ()
    {
@@ -38,7 +38,7 @@ public class HtmlFormatter implements Formatter
     * 
     * @return closing html and body tags
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#endContent()
+    * @see org.rage.manifest.Formatter#endContent()
     */
    public String endContent ()
    {
@@ -54,7 +54,7 @@ public class HtmlFormatter implements Formatter
     * @param information
     * @return the same string that was sent in with some html paragraph tags around it
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#format(java.lang.String)
+    * @see org.rage.manifest.Formatter#format(java.lang.String)
     */
    public String format (final String information)
    {
@@ -76,7 +76,7 @@ public class HtmlFormatter implements Formatter
     * @param manifest
     * @return Manifest in html format
     * @since Mar 26, 2010
-    * @see com.fitness.util.formatter.Formatter#format(com.fitness.util.Manifest)
+    * @see org.rage.manifest.Formatter#format(com.fitness.util.Manifest)
     */
    public String format (final Manifest manifest)
    {
@@ -108,6 +108,4 @@ public class HtmlFormatter implements Formatter
       return _html.toString ();
    }
 
-
 }
-

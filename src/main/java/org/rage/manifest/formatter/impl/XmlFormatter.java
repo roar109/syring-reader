@@ -16,7 +16,7 @@ public class XmlFormatter implements Formatter
     * 
     * @return closing tag
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#endContent()
+    * @see org.rage.manifest.Formatter#endContent()
     */
    public String endContent ()
    {
@@ -39,7 +39,7 @@ public class XmlFormatter implements Formatter
     * @param manifest
     * @return String representation of the Manifest
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#format(com.fitness.util.Manifest)
+    * @see org.rage.manifest.Formatter#format(com.fitness.util.Manifest)
     */
    public String format (final Manifest manifest)
    {
@@ -88,7 +88,7 @@ public class XmlFormatter implements Formatter
     * @param information
     * @return xml representation of the string provided
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#format(java.lang.String)
+    * @see org.rage.manifest.Formatter#format(java.lang.String)
     */
    public String format (final String information)
    {
@@ -103,11 +103,10 @@ public class XmlFormatter implements Formatter
     * 
     * @return main xml tag
     * @since Mar 29, 2010
-    * @see com.fitness.util.formatter.Formatter#startContent()
+    * @see org.rage.manifest.Formatter#startContent()
     */
    public String startContent ()
    {
       return "<VersionInfo>";
    }
-
 }
