@@ -28,6 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+/**
+ * AppVersion represents ...
+ *
+ * @version $Id$
+ * @since Aug 14, 2015
+ *
+ */
 public class AppVersion extends HttpServlet
 {
    private static final long                   serialVersionUID     = 1L;
@@ -79,7 +86,7 @@ public class AppVersion extends HttpServlet
 
    /**
     * main method for printing out the manifest information
-    * 
+    *
     * @param request - servlet request
     * @param response - servlet response
     */
@@ -133,7 +140,7 @@ public class AppVersion extends HttpServlet
    /**
     * Using the base directory this method will find and loop through all Jar's associated with the application and
     * print out the manifest information for each one
-    * 
+    *
     * @param baseDir - root directory of the web application
     * @param printWriter - output stream to print the manifest information out to
     * @throws IOException
@@ -158,7 +165,7 @@ public class AppVersion extends HttpServlet
 
    /**
     * Prints all manifest information to the given PrintWriter
-    * 
+    *
     * @param manifest - manifest file to show the information from
     * @param displayName - Title to be shown for the manifest information
     * @param printWriter - outputstream of the information
@@ -189,9 +196,9 @@ public class AppVersion extends HttpServlet
 
    /**
     * determines which formatter to use and initializes / returns the correct one.
-    * 
+    *
     * The default formatter is HTML
-    * 
+    *
     * @param request
     * @return output formatter. default is HTML
     * @since Mar 29, 2010
@@ -214,7 +221,7 @@ public class AppVersion extends HttpServlet
 
    /**
     * closes any Closeable item and eats any exceptions that might be thrown from the close call
-    * 
+    *
     * @param closeableStream
     */
    private void close (final Closeable closeableStream)
@@ -241,9 +248,9 @@ public class AppVersion extends HttpServlet
    /**
     * When extending this class use this method to add items to be searched for and printed from the manifest file. Some
     * items already included are Build_Jdk, Created-by
-    * 
+    *
     * NOTE: Case is important
-    * 
+    *
     * @param manifestItem - item to be added to the printout of manifest information
     */
    protected final void addItemToShowFromManifest (final String manifestItem)
