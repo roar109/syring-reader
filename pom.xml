@@ -10,30 +10,28 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>2.0.2</log4j.version>
+		<java.jee.api.version>6.0</java.jee.api.version>
+		<syring.version>1.0.1</syring.version>
 	</properties>
 
 	<dependencies>
-
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.4</version>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>${java.jee.api.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
-      <dependency>
-         <groupId>log4j</groupId>
-         <artifactId>log4j</artifactId>
-         <version>1.2.17</version>
-         <scope>provided</scope>
-      </dependency>
-
+		
+		<dependency>
+			<groupId>com.github.roar109</groupId>
+			<artifactId>syring</artifactId>
+			<version>${syring.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<!-- JAR Manifest Plugin -->
+			<!-- JAR Manifest Plugin  -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -57,11 +55,11 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<compilerVersion>1.7</compilerVersion>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 		</plugins>
