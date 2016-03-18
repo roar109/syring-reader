@@ -88,58 +88,40 @@ public class AppVersion extends HttpServlet {
 	 *            - servlet response
 	 */
 	protected final void execute(final HttpServletRequest request, final HttpServletResponse response) {
-		PrintWriter _out = null;
-		final Formatter _formatter = getFormatter(request, response);
+		PrintWriter out = null;
+		final Formatter formatter = getFormatter(request, response);
+		
 		try {
-			_out = response.getWriter();
-			_out.write(_formatter.startContent());
+			out = response.getWriter();
+			out.write(formatter.startContent());
 
-			final String _basePath = request.getSession().getServletContext().getRealPath(PATH_SEPARATOR);
-			final String _warManifest = _basePath + PATH_SEPARATOR + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
-			// m_log.debug("URL to manifest is: " + _warManifest);
-			final InputStream is = new FileInputStream(new File(_warManifest));
-			final Manifest _manifest = new Manifest(is);
-			// m_log.debug("mainfest " + _manifest);
+			final String basePath = request.getSession().getServletContext().getRealPath(PATH_SEPARATOR);
+			final String warManifest = basePath + PATH_SEPARATOR + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
+			final InputStream is = new FileInputStream(new File(warManifest));
+			final Manifest manifest = new Manifest(is);
 
-			printManifestInfo(_manifest, "WAR manifest", _out, _formatter);
+			printManifestInfo(manifest, "WAR manifest", out, formatter);
 
 			final String showJarFiles = request.getParameter(SHOW_JAR_FILES_PARAM);
 			if ((null != showJarFiles) && "y".equalsIgnoreCase(showJarFiles)) {
-				showJarFileManifestInfo(_basePath, _out, _formatter);
+				showJarFileManifestInfo(basePath, out, formatter);
 			} else {
-				_out.print(_formatter
+				out.print(formatter
 						.format("To view the manifest information for the jar files add the following parameter to the URL: "
 								+ SHOW_JAR_FILES_PARAM + "=Y"));
 			}
 
-			final String showJndiParam = request.getParameter(SHOW_JNDI_PARAM);
-			if ((null != showJndiParam) && "y".equalsIgnoreCase(showJndiParam)) {
-				// TODO Add jndi
-				showJndiInfo(_out, _formatter);
-			} else {
-				_out.print(_formatter.format("To view the JNDI information add the following parameter to the URL: "
-						+ SHOW_JNDI_PARAM + "=Y"));
-			}
+			showJndiInfo(request, out, formatter);
+			showFilePropertiesInfo(request, out, formatter);
 
-			final String showFileProps = request.getParameter(SHOW_FILE_PROPERTY_PARAM);
-			if ((null != showFileProps) && "y".equalsIgnoreCase(showFileProps)) {
-				// TODO Add file props
-				showFilePropertiesInfo(_out, _formatter);
-			} else {
-				_out.print(_formatter
-						.format("To view the file properties available add the following parameter to the URL: "
-								+ SHOW_FILE_PROPERTY_PARAM + "=Y"));
-			}
-
-			_out.write(_formatter.endContent());
+			out.write(formatter.endContent());
 		} catch (final Exception e) {
-			// m_log.error("Unable to get all manifest information", e);
 			System.err.println(e.getMessage());
 			e.printStackTrace();
-			_out.print(_formatter.format(
+			out.print(formatter.format(
 					"There was an error getting the manifest information.  Please review the logs for details."));
 		} finally {
-			close(_out);
+			close(out);
 		}
 	}
 
@@ -160,11 +142,7 @@ public class AppVersion extends HttpServlet {
 		if (_file.isDirectory()) {
 			JarFile _jar;
 			for (final File _jarFile : _file.listFiles()) {
-				// adding no pmd here as moving the creation of the JarFile
-				// object into its own method is fairly pointless
-				// for this
-				_jar = new JarFile(_jarFile); // NOPMD for creating items in a
-				// loop
+				_jar = new JarFile(_jarFile);
 				printManifestInfo(_jar.getManifest(), _jar.getName(), printWriter, formatter);
 			}
 		}
@@ -234,10 +212,6 @@ public class AppVersion extends HttpServlet {
 			}
 		} catch (final Exception e) {
 			// dont care to report this issue
-			/*
-			 * if (m_log.isDebugEnabled()) { m_log.debug(
-			 * "Got exception closing the stream...", e); }
-			 */
 		}
 	}
 
@@ -257,27 +231,42 @@ public class AppVersion extends HttpServlet {
 		}
 	}
 
-	private void showJndiInfo(final PrintWriter printWriter, final Formatter formatter) {
-		final List<JNDI> jndis = new ArrayList<JNDI>();
-		final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(JNDIPropertyResolver.class);
-		if(propertyResolver != null && propertyResolver instanceof JNDIPropertyResolver){
-			JNDIPropertyResolver jndiPropRsolver = (JNDIPropertyResolver)propertyResolver;
-			for(String key : jndiPropRsolver.getJndiValuesCache().keySet()){
-				jndis.add(new JNDI(key, jndiPropRsolver.getJndiValuesCache().get(key)));
+	private void showJndiInfo(final HttpServletRequest request, final PrintWriter printWriter, final Formatter formatter) {
+		final String showJndiParam = request.getParameter(SHOW_JNDI_PARAM);
+		if ((null != showJndiParam) && "y".equalsIgnoreCase(showJndiParam)) {
+			final List<JNDI> jndis = new ArrayList<JNDI>();
+			
+			final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(JNDIPropertyResolver.class);
+			if(propertyResolver != null && propertyResolver instanceof JNDIPropertyResolver){
+				JNDIPropertyResolver jndiPropRsolver = (JNDIPropertyResolver)propertyResolver;
+				for(String key : jndiPropRsolver.getJndiValuesCache().keySet()){
+					jndis.add(new JNDI(key, jndiPropRsolver.getJndiValuesCache().get(key)));
+				}
 			}
+			printWriter.print(formatter.formatJndi(jndis));
+		} else {
+			printWriter.print(formatter.format("To view the JNDI information add the following parameter to the URL: "
+					+ SHOW_JNDI_PARAM + "=Y"));
 		}
-		printWriter.print(formatter.formatJndi(jndis));
 	}
 
-	private void showFilePropertiesInfo(final PrintWriter printWriter, final Formatter formatter) {
-		final List<FileProperties> fileProperties = new ArrayList<>();
-		final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(PropertyFileResolver.class);
-		if(propertyResolver != null && propertyResolver instanceof PropertyFileResolver){
-			final PropertyFileResolver filePropertyResolver = (PropertyFileResolver)propertyResolver;
-			for(String key : filePropertyResolver.getPropertiesMap().keySet()){
-				fileProperties.add(new FileProperties(key, filePropertyResolver.getPropertiesMap().get(key)));
+	private void showFilePropertiesInfo(final HttpServletRequest request, final PrintWriter printWriter, final Formatter formatter) {
+		final String showFileProps = request.getParameter(SHOW_FILE_PROPERTY_PARAM);
+		if ((null != showFileProps) && "y".equalsIgnoreCase(showFileProps)) {
+			final List<FileProperties> fileProperties = new ArrayList<>();
+			
+			final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(PropertyFileResolver.class);
+			if(propertyResolver != null && propertyResolver instanceof PropertyFileResolver){
+				final PropertyFileResolver filePropertyResolver = (PropertyFileResolver)propertyResolver;
+				for(String key : filePropertyResolver.getPropertiesMap().keySet()){
+					fileProperties.add(new FileProperties(key, filePropertyResolver.getPropertiesMap().get(key)));
+				}
 			}
+			printWriter.print(formatter.formatFileProperties(fileProperties));
+		} else {
+			printWriter.print(formatter
+					.format("To view the file properties available add the following parameter to the URL: "
+							+ SHOW_FILE_PROPERTY_PARAM + "=Y"));
 		}
-		printWriter.print(formatter.formatFileProperties(fileProperties));
 	}
 }
