@@ -3,6 +3,12 @@ package com.github.roar109.syring.reader.manifest.reader;
 import com.github.roar109.syring.reader.manifest.formatter.Formatter;
 import com.github.roar109.syring.reader.manifest.formatter.impl.HtmlFormatter;
 import com.github.roar109.syring.reader.manifest.formatter.impl.XmlFormatter;
+import com.github.roar109.syring.reader.manifest.model.FileProperties;
+import com.github.roar109.syring.reader.manifest.model.JNDI;
+import com.github.roar109.syring.resolver.JNDIPropertyResolver;
+import com.github.roar109.syring.resolver.PropertyFileResolver;
+import com.github.roar109.syring.resolver.PropertyResolver;
+import com.github.roar109.syring.resolver.factory.PropertyResolverFactory;
 
 import java.io.Closeable;
 import java.io.File;
@@ -10,9 +16,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -88,7 +95,7 @@ public class AppVersion extends HttpServlet {
 			_out.write(_formatter.startContent());
 
 			final String _basePath = request.getSession().getServletContext().getRealPath(PATH_SEPARATOR);
-			final String _warManifest = _basePath +PATH_SEPARATOR +"META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
+			final String _warManifest = _basePath + PATH_SEPARATOR + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
 			// m_log.debug("URL to manifest is: " + _warManifest);
 			final InputStream is = new FileInputStream(new File(_warManifest));
 			final Manifest _manifest = new Manifest(is);
@@ -108,6 +115,7 @@ public class AppVersion extends HttpServlet {
 			final String showJndiParam = request.getParameter(SHOW_JNDI_PARAM);
 			if ((null != showJndiParam) && "y".equalsIgnoreCase(showJndiParam)) {
 				// TODO Add jndi
+				showJndiInfo(_out, _formatter);
 			} else {
 				_out.print(_formatter.format("To view the JNDI information add the following parameter to the URL: "
 						+ SHOW_JNDI_PARAM + "=Y"));
@@ -116,6 +124,7 @@ public class AppVersion extends HttpServlet {
 			final String showFileProps = request.getParameter(SHOW_FILE_PROPERTY_PARAM);
 			if ((null != showFileProps) && "y".equalsIgnoreCase(showFileProps)) {
 				// TODO Add file props
+				showFilePropertiesInfo(_out, _formatter);
 			} else {
 				_out.print(_formatter
 						.format("To view the file properties available add the following parameter to the URL: "
@@ -246,5 +255,29 @@ public class AppVersion extends HttpServlet {
 		if ((null != manifestItem) && (manifestItem.length() > 0)) {
 			m_propertyList.add(manifestItem);
 		}
+	}
+
+	private void showJndiInfo(final PrintWriter printWriter, final Formatter formatter) {
+		final List<JNDI> jndis = new ArrayList<JNDI>();
+		final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(JNDIPropertyResolver.class);
+		if(propertyResolver != null && propertyResolver instanceof JNDIPropertyResolver){
+			JNDIPropertyResolver jndiPropRsolver = (JNDIPropertyResolver)propertyResolver;
+			for(String key : jndiPropRsolver.getJndiValuesCache().keySet()){
+				jndis.add(new JNDI(key, jndiPropRsolver.getJndiValuesCache().get(key)));
+			}
+		}
+		printWriter.print(formatter.formatJndi(jndis));
+	}
+
+	private void showFilePropertiesInfo(final PrintWriter printWriter, final Formatter formatter) {
+		final List<FileProperties> fileProperties = new ArrayList<>();
+		final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(PropertyFileResolver.class);
+		if(propertyResolver != null && propertyResolver instanceof PropertyFileResolver){
+			final PropertyFileResolver filePropertyResolver = (PropertyFileResolver)propertyResolver;
+			for(String key : filePropertyResolver.getPropertiesMap().keySet()){
+				fileProperties.add(new FileProperties(key, filePropertyResolver.getPropertiesMap().get(key)));
+			}
+		}
+		printWriter.print(formatter.formatFileProperties(fileProperties));
 	}
 }

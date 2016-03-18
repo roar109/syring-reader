@@ -1,6 +1,10 @@
 package com.github.roar109.syring.reader.manifest.formatter;
 
 
+import java.util.List;
+
+import com.github.roar109.syring.reader.manifest.model.FileProperties;
+import com.github.roar109.syring.reader.manifest.model.JNDI;
 import com.github.roar109.syring.reader.manifest.model.Manifest;
 
 
@@ -21,6 +25,10 @@ public interface Formatter
     * @since Mar 29, 2010
     */
    String format (Manifest manifest);
+   
+   String formatJndi(List<JNDI> jndis);
+   
+   String formatFileProperties(List<FileProperties> fileProperties);
 
 
    /**
