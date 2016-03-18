@@ -88,7 +88,7 @@ public class AppVersion extends HttpServlet {
 			_out.write(_formatter.startContent());
 
 			final String _basePath = request.getSession().getServletContext().getRealPath(PATH_SEPARATOR);
-			final String _warManifest = _basePath + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
+			final String _warManifest = _basePath +PATH_SEPARATOR +"META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
 			// m_log.debug("URL to manifest is: " + _warManifest);
 			final InputStream is = new FileInputStream(new File(_warManifest));
 			final Manifest _manifest = new Manifest(is);
