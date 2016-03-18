@@ -24,9 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * AppVersion represents ...
+ * AppVersion
  *
- * @version $Id$
  * @since Aug 14, 2015
  *
  */
@@ -34,6 +33,8 @@ public class AppVersion extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final transient Set<String> m_propertyList;
 	private static final String SHOW_JAR_FILES_PARAM = "showJarFiles";
+	private static final String SHOW_JNDI_PARAM = "showJndi";
+	private static final String SHOW_FILE_PROPERTY_PARAM = "showFileProps";
 	private static final String VIEW_XML_PARAM = "viewXml";
 	private static final String PATH_SEPARATOR = System.getProperty("file.separator");
 
@@ -88,27 +89,42 @@ public class AppVersion extends HttpServlet {
 
 			final String _basePath = request.getSession().getServletContext().getRealPath("/");
 			final String _warManifest = _basePath + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
-			//m_log.debug("URL to manifest is: " + _warManifest);
+			// m_log.debug("URL to manifest is: " + _warManifest);
 			final InputStream is = new FileInputStream(new File(_warManifest));
 			final Manifest _manifest = new Manifest(is);
-			//m_log.debug("mainfest " + _manifest);
+			// m_log.debug("mainfest " + _manifest);
 
 			printManifestInfo(_manifest, "WAR manifest", _out, _formatter);
 
-			final String _showJarFiles = request.getParameter(SHOW_JAR_FILES_PARAM);
-			if ((null != _showJarFiles) && _showJarFiles.equalsIgnoreCase("y")) {
+			final String showJarFiles = request.getParameter(SHOW_JAR_FILES_PARAM);
+			if ((null != showJarFiles) && "y".equalsIgnoreCase(showJarFiles)) {
 				showJarFileManifestInfo(_basePath, _out, _formatter);
 			} else {
-				// tell the user how to get the manifest information for jar
-				// files to show up.
 				_out.print(_formatter
 						.format("To view the manifest information for the jar files add the following parameter to the URL: "
 								+ SHOW_JAR_FILES_PARAM + "=Y"));
 			}
 
+			final String showJndiParam = request.getParameter(SHOW_JNDI_PARAM);
+			if ((null != showJndiParam) && "y".equalsIgnoreCase(showJndiParam)) {
+				// TODO Add jndi
+			} else {
+				_out.print(_formatter.format("To view the JNDI information add the following parameter to the URL: "
+						+ SHOW_JNDI_PARAM + "=Y"));
+			}
+
+			final String showFileProps = request.getParameter(SHOW_FILE_PROPERTY_PARAM);
+			if ((null != showFileProps) && "y".equalsIgnoreCase(showFileProps)) {
+				// TODO Add file props
+			} else {
+				_out.print(_formatter
+						.format("To view the file properties available add the following parameter to the URL: "
+								+ SHOW_FILE_PROPERTY_PARAM + "=Y"));
+			}
+
 			_out.write(_formatter.endContent());
 		} catch (final Exception e) {
-			//m_log.error("Unable to get all manifest information", e);
+			// m_log.error("Unable to get all manifest information", e);
 			_out.print(_formatter.format(
 					"There was an error getting the manifest information.  Please review the logs for details."));
 		} finally {
@@ -207,9 +223,10 @@ public class AppVersion extends HttpServlet {
 			}
 		} catch (final Exception e) {
 			// dont care to report this issue
-			/*if (m_log.isDebugEnabled()) {
-				m_log.debug("Got exception closing the stream...", e);
-			}*/
+			/*
+			 * if (m_log.isDebugEnabled()) { m_log.debug(
+			 * "Got exception closing the stream...", e); }
+			 */
 		}
 	}
 
