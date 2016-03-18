@@ -1,4 +1,4 @@
-package org.rage.manifest.model;
+package com.github.roar109.syring.reader.manifest.model;
 
 import java.util.Map;
 

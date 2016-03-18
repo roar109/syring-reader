@@ -1,7 +1,7 @@
-package org.rage.manifest.formatter;
+package com.github.roar109.syring.reader.manifest.formatter;
 
 
-import org.rage.manifest.model.Manifest;
+import com.github.roar109.syring.reader.manifest.model.Manifest;
 
 
 /**

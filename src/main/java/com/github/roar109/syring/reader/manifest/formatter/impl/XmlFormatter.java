@@ -1,10 +1,10 @@
-package org.rage.manifest.formatter.impl;
+package com.github.roar109.syring.reader.manifest.formatter.impl;
 
 import java.text.MessageFormat;
 import java.util.Map.Entry;
 
-import org.rage.manifest.formatter.Formatter;
-import org.rage.manifest.model.Manifest;
+import com.github.roar109.syring.reader.manifest.formatter.Formatter;
+import com.github.roar109.syring.reader.manifest.model.Manifest;
 
 public class XmlFormatter implements Formatter
 {

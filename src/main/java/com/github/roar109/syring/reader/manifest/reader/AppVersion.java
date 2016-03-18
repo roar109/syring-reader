@@ -1,8 +1,8 @@
-package org.rage.manifest.reader;
+package com.github.roar109.syring.reader.manifest.reader;
 
-import org.rage.manifest.formatter.Formatter;
-import org.rage.manifest.formatter.impl.HtmlFormatter;
-import org.rage.manifest.formatter.impl.XmlFormatter;
+import com.github.roar109.syring.reader.manifest.formatter.Formatter;
+import com.github.roar109.syring.reader.manifest.formatter.impl.HtmlFormatter;
+import com.github.roar109.syring.reader.manifest.formatter.impl.XmlFormatter;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -173,7 +173,7 @@ public class AppVersion extends HttpServlet {
     private void printManifestInfo(final Manifest manifest,
 	    final String displayName, final PrintWriter printWriter,
 	    final Formatter formatter) {
-	final org.rage.manifest.model.Manifest _customManifest = new org.rage.manifest.model.Manifest();
+	final com.github.roar109.syring.reader.manifest.model.Manifest _customManifest = new com.github.roar109.syring.reader.manifest.model.Manifest();
 	_customManifest.setName(displayName);
 	final Map<String, String> _manifestEntries = new HashMap<String, String>();
 	_customManifest.setEntries(_manifestEntries);
