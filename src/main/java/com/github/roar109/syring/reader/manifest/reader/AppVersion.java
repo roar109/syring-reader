@@ -87,7 +87,7 @@ public class AppVersion extends HttpServlet {
 			_out = response.getWriter();
 			_out.write(_formatter.startContent());
 
-			final String _basePath = request.getSession().getServletContext().getRealPath("/");
+			final String _basePath = request.getSession().getServletContext().getRealPath(PATH_SEPARATOR);
 			final String _warManifest = _basePath + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
 			// m_log.debug("URL to manifest is: " + _warManifest);
 			final InputStream is = new FileInputStream(new File(_warManifest));
@@ -125,6 +125,8 @@ public class AppVersion extends HttpServlet {
 			_out.write(_formatter.endContent());
 		} catch (final Exception e) {
 			// m_log.error("Unable to get all manifest information", e);
+			System.err.println(e.getMessage());
+			e.printStackTrace();
 			_out.print(_formatter.format(
 					"There was an error getting the manifest information.  Please review the logs for details."));
 		} finally {
