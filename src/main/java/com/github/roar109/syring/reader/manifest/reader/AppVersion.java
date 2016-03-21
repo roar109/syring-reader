@@ -37,8 +37,9 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 public class AppVersion extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
-	private static final transient Set<String> m_propertyList;
+	private static final transient Set<String> propertyList;
 	private static final String SHOW_JAR_FILES_PARAM = "showJarFiles";
 	private static final String SHOW_JNDI_PARAM = "showJndi";
 	private static final String SHOW_FILE_PROPERTY_PARAM = "showFileProps";
@@ -48,15 +49,15 @@ public class AppVersion extends HttpServlet {
 	static {
 		// static block initializing the list of items to be displayed from the
 		// manifest file
-		m_propertyList = new HashSet<String>();
-		m_propertyList.add(Attributes.Name.IMPLEMENTATION_VERSION.toString());
-		m_propertyList.add(Attributes.Name.IMPLEMENTATION_VENDOR.toString());
-		m_propertyList.add(Attributes.Name.IMPLEMENTATION_TITLE.toString());
-		m_propertyList.add("Build-Jdk");
-		m_propertyList.add("Build-Operating-System");
-		m_propertyList.add("Built-By");
-		m_propertyList.add("Build-Directory");
-		m_propertyList.add("Build-Time");
+		propertyList = new HashSet<String>();
+		propertyList.add(Attributes.Name.IMPLEMENTATION_VERSION.toString());
+		propertyList.add(Attributes.Name.IMPLEMENTATION_VENDOR.toString());
+		propertyList.add(Attributes.Name.IMPLEMENTATION_TITLE.toString());
+		propertyList.add("Build-Jdk");
+		propertyList.add("Build-Operating-System");
+		propertyList.add("Built-By");
+		propertyList.add("Build-Directory");
+		propertyList.add("Build-Time");
 	}
 
 	/**
@@ -102,6 +103,9 @@ public class AppVersion extends HttpServlet {
 
 			printManifestInfo(manifest, "WAR manifest", out, formatter);
 
+			showJndiInfo(request, out, formatter);
+			showFilePropertiesInfo(request, out, formatter);
+			
 			final String showJarFiles = request.getParameter(SHOW_JAR_FILES_PARAM);
 			if ((null != showJarFiles) && "y".equalsIgnoreCase(showJarFiles)) {
 				showJarFileManifestInfo(basePath, out, formatter);
@@ -110,9 +114,6 @@ public class AppVersion extends HttpServlet {
 						.format("To view the manifest information for the jar files add the following parameter to the URL: "
 								+ SHOW_JAR_FILES_PARAM + "=Y"));
 			}
-
-			showJndiInfo(request, out, formatter);
-			showFilePropertiesInfo(request, out, formatter);
 
 			out.write(formatter.endContent());
 		} catch (final Exception e) {
@@ -138,12 +139,13 @@ public class AppVersion extends HttpServlet {
 	 */
 	private void showJarFileManifestInfo(final String baseDir, final PrintWriter printWriter, final Formatter formatter)
 			throws IOException {
-		final File _file = new File(baseDir + PATH_SEPARATOR + "WEB-INF" + PATH_SEPARATOR + "lib");
-		if (_file.isDirectory()) {
-			JarFile _jar;
-			for (final File _jarFile : _file.listFiles()) {
-				_jar = new JarFile(_jarFile);
-				printManifestInfo(_jar.getManifest(), _jar.getName(), printWriter, formatter);
+		final File libFile = new File(baseDir + PATH_SEPARATOR + "WEB-INF" + PATH_SEPARATOR + "lib");
+		
+		if (libFile != null && libFile.isDirectory()) {
+			for (final File file : libFile.listFiles()) {
+				try(final JarFile jarFile = new JarFile(file)){
+					printManifestInfo(jarFile.getManifest(), jarFile.getName(), printWriter, formatter);	
+				}
 			}
 		}
 	}
@@ -162,19 +164,20 @@ public class AppVersion extends HttpServlet {
 	 */
 	private void printManifestInfo(final Manifest manifest, final String displayName, final PrintWriter printWriter,
 			final Formatter formatter) {
-		final com.github.roar109.syring.reader.manifest.model.Manifest _customManifest = new com.github.roar109.syring.reader.manifest.model.Manifest();
-		_customManifest.setName(displayName);
-		final Map<String, String> _manifestEntries = new HashMap<String, String>();
-		_customManifest.setEntries(_manifestEntries);
+		final com.github.roar109.syring.reader.manifest.model.Manifest customManifest = new com.github.roar109.syring.reader.manifest.model.Manifest();
+		customManifest.setName(displayName);
+		final Map<String, String> manifestEntries = new HashMap<String, String>();
+		customManifest.setEntries(manifestEntries);
+		
 		if (null != manifest) {
-			final Attributes _attributes = manifest.getMainAttributes();
-			for (final String _item : m_propertyList) {
-				_manifestEntries.put(_item, _attributes.getValue(_item));
+			final Attributes attributes = manifest.getMainAttributes();
+			for (final String item : propertyList) {
+				manifestEntries.put(item, attributes.getValue(item));
 			}
 		} else {
-			_manifestEntries.put("", "There is no manifest for this artifact");
+			manifestEntries.put("", "There is no manifest for this artifact");
 		}
-		printWriter.print(formatter.format(_customManifest));
+		printWriter.print(formatter.format(customManifest));
 	}
 
 	/**
@@ -188,15 +191,16 @@ public class AppVersion extends HttpServlet {
 	 * @since Mar 29, 2010
 	 */
 	private Formatter getFormatter(final HttpServletRequest request, final HttpServletResponse response) {
-		final String _showXml = request.getParameter(VIEW_XML_PARAM);
-		Formatter _formatter = null;
-		if ((null != _showXml) && _showXml.equalsIgnoreCase("y")) {
-			_formatter = new XmlFormatter();
+		final String showXml = request.getParameter(VIEW_XML_PARAM);
+		Formatter formatter = null;
+		
+		if ((null != showXml) && showXml.equalsIgnoreCase("y")) {
+			formatter = new XmlFormatter();
 		} else {
-			_formatter = new HtmlFormatter();
+			formatter = new HtmlFormatter();
 			response.setContentType("text/html");
 		}
-		return _formatter;
+		return formatter;
 	}
 
 	/**
@@ -227,7 +231,7 @@ public class AppVersion extends HttpServlet {
 	 */
 	protected final void addItemToShowFromManifest(final String manifestItem) {
 		if ((null != manifestItem) && (manifestItem.length() > 0)) {
-			m_propertyList.add(manifestItem);
+			propertyList.add(manifestItem);
 		}
 	}
 
@@ -238,8 +242,8 @@ public class AppVersion extends HttpServlet {
 			
 			final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(JNDIPropertyResolver.class);
 			if(propertyResolver != null && propertyResolver instanceof JNDIPropertyResolver){
-				JNDIPropertyResolver jndiPropRsolver = (JNDIPropertyResolver)propertyResolver;
-				for(String key : jndiPropRsolver.getJndiValuesCache().keySet()){
+				final JNDIPropertyResolver jndiPropRsolver = (JNDIPropertyResolver)propertyResolver;
+				for(final String key : jndiPropRsolver.getJndiValuesCache().keySet()){
 					jndis.add(new JNDI(key, jndiPropRsolver.getJndiValuesCache().get(key)));
 				}
 			}
@@ -258,7 +262,7 @@ public class AppVersion extends HttpServlet {
 			final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(PropertyFileResolver.class);
 			if(propertyResolver != null && propertyResolver instanceof PropertyFileResolver){
 				final PropertyFileResolver filePropertyResolver = (PropertyFileResolver)propertyResolver;
-				for(String key : filePropertyResolver.getPropertiesMap().keySet()){
+				for(final String key : filePropertyResolver.getPropertiesMap().keySet()){
 					fileProperties.add(new FileProperties(key, filePropertyResolver.getPropertiesMap().get(key)));
 				}
 			}

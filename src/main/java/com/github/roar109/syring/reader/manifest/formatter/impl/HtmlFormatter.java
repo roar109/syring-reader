@@ -9,6 +9,7 @@ import com.github.roar109.syring.reader.manifest.model.JNDI;
 import com.github.roar109.syring.reader.manifest.model.Manifest;
 
 public class HtmlFormatter implements Formatter {
+
 	private static final String TABLE_OPEN = "<TABLE border=1>";
 	private static final String TABLE_CLOSE = "</table>";
 	private static final String ROW_OPEN = "<TR>";
@@ -26,9 +27,7 @@ public class HtmlFormatter implements Formatter {
 	 * @see org.rage.manifest.Formatter#startContent()
 	 */
 	public String startContent() {
-		final StringBuilder _html = new StringBuilder();
-		_html.append("<html><body>");
-		return _html.toString();
+		return "<html><body>";
 	}
 
 	/**
@@ -56,13 +55,13 @@ public class HtmlFormatter implements Formatter {
 	 * @see org.rage.manifest.Formatter#format(java.lang.String)
 	 */
 	public String format(final String information) {
-		final StringBuilder _html = new StringBuilder();
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(information);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		return _html.toString();
+		final StringBuilder html = new StringBuilder();
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		html.append(information);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		return html.toString();
 	}
 
 	/**
@@ -76,86 +75,88 @@ public class HtmlFormatter implements Formatter {
 	 * @see org.rage.manifest.Formatter#format(com.fitness.util.Manifest)
 	 */
 	public String format(final Manifest manifest) {
-		final StringBuilder _html = new StringBuilder();
-		_html.append(TABLE_OPEN);
-		_html.append(ROW_OPEN);
-		_html.append("<td colspan=2>");
-		_html.append(manifest.getName());
-		_html.append(DATA_CLOSE);
-		_html.append(ROW_CLOSE);
+		final StringBuilder html = new StringBuilder();
+		html.append(TABLE_OPEN);
+		html.append(ROW_OPEN);
+		html.append("<td colspan=2>");
+		html.append(manifest.getName());
+		html.append(DATA_CLOSE);
+		html.append(ROW_CLOSE);
+		
 		if (null != manifest.getEntries()) {
-			for (final Entry<String, String> _entry : manifest.getEntries().entrySet()) {
-				_html.append(ROW_OPEN);
-				_html.append(DATA_OPEN);
-				_html.append(_entry.getKey());
-				_html.append(DATA_CLOSE);
-				_html.append(DATA_OPEN);
-				_html.append(_entry.getValue());
-				_html.append(DATA_CLOSE);
-				_html.append(ROW_CLOSE);
+			for (final Entry<String, String> entry : manifest.getEntries().entrySet()) {
+				html.append(ROW_OPEN);
+				html.append(DATA_OPEN);
+				html.append(entry.getKey());
+				html.append(DATA_CLOSE);
+				html.append(DATA_OPEN);
+				html.append(entry.getValue());
+				html.append(DATA_CLOSE);
+				html.append(ROW_CLOSE);
 			}
 		}
-		_html.append(TABLE_CLOSE);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		return _html.toString();
+		html.append(TABLE_CLOSE);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		return html.toString();
 	}
 
 	@Override
-	public String formatJndi(List<JNDI> jndis) {
-		final StringBuilder _html = new StringBuilder();
-		_html.append(TABLE_OPEN);
-		_html.append(ROW_OPEN);
-		_html.append("<td colspan=2>");
-		_html.append("JNDI");
-		_html.append(DATA_CLOSE);
-		_html.append(ROW_CLOSE);
+	public String formatJndi(final List<JNDI> jndis) {
+		final StringBuilder html = new StringBuilder();
+		html.append(TABLE_OPEN);
+		html.append(ROW_OPEN);
+		html.append("<td colspan=2>");
+		html.append("JNDI");
+		html.append(DATA_CLOSE);
+		html.append(ROW_CLOSE);
 		if (null != jndis) {
 			for (final JNDI jndi : jndis) {
-				_html.append(ROW_OPEN);
-				_html.append(DATA_OPEN);
-				_html.append(jndi.getJndiName());
-				_html.append(DATA_CLOSE);
-				_html.append(DATA_OPEN);
-				_html.append(jndi.getJndiValue());
-				_html.append(DATA_CLOSE);
-				_html.append(ROW_CLOSE);
+				html.append(ROW_OPEN);
+				html.append(DATA_OPEN);
+				html.append(jndi.getJndiName());
+				html.append(DATA_CLOSE);
+				html.append(DATA_OPEN);
+				html.append(jndi.getJndiValue());
+				html.append(DATA_CLOSE);
+				html.append(ROW_CLOSE);
 			}
 		}
-		_html.append(TABLE_CLOSE);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		return _html.toString();
+		html.append(TABLE_CLOSE);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		return html.toString();
 	}
 
 	@Override
-	public String formatFileProperties(List<FileProperties> fileProperties) {
-		final StringBuilder _html = new StringBuilder();
-		_html.append(TABLE_OPEN);
-		_html.append(ROW_OPEN);
-		_html.append("<td colspan=2>");
-		_html.append("File Properties");
-		_html.append(DATA_CLOSE);
-		_html.append(ROW_CLOSE);
+	public String formatFileProperties(final List<FileProperties> fileProperties) {
+		final StringBuilder html = new StringBuilder();
+		html.append(TABLE_OPEN);
+		html.append(ROW_OPEN);
+		html.append("<td colspan=2>");
+		html.append("File Properties");
+		html.append(DATA_CLOSE);
+		html.append(ROW_CLOSE);
+		
 		if (null != fileProperties) {
 			for (final FileProperties fProp : fileProperties) {
-				_html.append(ROW_OPEN);
-				_html.append(DATA_OPEN);
-				_html.append(fProp.getKey());
-				_html.append(DATA_CLOSE);
-				_html.append(DATA_OPEN);
-				_html.append(fProp.getValue());
-				_html.append(DATA_CLOSE);
-				_html.append(ROW_CLOSE);
+				html.append(ROW_OPEN);
+				html.append(DATA_OPEN);
+				html.append(fProp.getKey());
+				html.append(DATA_CLOSE);
+				html.append(DATA_OPEN);
+				html.append(fProp.getValue());
+				html.append(DATA_CLOSE);
+				html.append(ROW_CLOSE);
 			}
 		}
-		_html.append(TABLE_CLOSE);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		_html.append(NEW_PARAGRAPH);
-		return _html.toString();
+		html.append(TABLE_CLOSE);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		html.append(NEW_PARAGRAPH);
+		return html.toString();
 	}
 
 }
