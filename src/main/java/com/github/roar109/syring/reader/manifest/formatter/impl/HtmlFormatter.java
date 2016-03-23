@@ -36,7 +36,6 @@ public class HtmlFormatter implements Formatter {
 	 * 
 	 * @return closing html and body tags
 	 * @since Mar 29, 2010
-	 * @see org.rage.manifest.Formatter#endContent()
 	 */
 	public String endContent() {
 		return "</body></html>";
@@ -52,7 +51,6 @@ public class HtmlFormatter implements Formatter {
 	 * @return the same string that was sent in with some html paragraph tags
 	 *         around it
 	 * @since Mar 29, 2010
-	 * @see org.rage.manifest.Formatter#format(java.lang.String)
 	 */
 	public String format(final String information) {
 		final StringBuilder html = new StringBuilder();
@@ -72,7 +70,6 @@ public class HtmlFormatter implements Formatter {
 	 * @param manifest
 	 * @return Manifest in html format
 	 * @since Mar 26, 2010
-	 * @see org.rage.manifest.Formatter#format(com.fitness.util.Manifest)
 	 */
 	public String format(final Manifest manifest) {
 		final StringBuilder html = new StringBuilder();
@@ -82,7 +79,7 @@ public class HtmlFormatter implements Formatter {
 		html.append(manifest.getName());
 		html.append(DATA_CLOSE);
 		html.append(ROW_CLOSE);
-		
+
 		if (null != manifest.getEntries()) {
 			for (final Entry<String, String> entry : manifest.getEntries().entrySet()) {
 				html.append(ROW_OPEN);
@@ -139,7 +136,7 @@ public class HtmlFormatter implements Formatter {
 		html.append("File Properties");
 		html.append(DATA_CLOSE);
 		html.append(ROW_CLOSE);
-		
+
 		if (null != fileProperties) {
 			for (final FileProperties fProp : fileProperties) {
 				html.append(ROW_OPEN);

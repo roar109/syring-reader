@@ -98,8 +98,8 @@ public class AppVersion extends HttpServlet {
 
 			final String basePath = request.getSession().getServletContext().getRealPath(PATH_SEPARATOR);
 			final String warManifest = basePath + PATH_SEPARATOR + "META-INF" + PATH_SEPARATOR + "MANIFEST.MF";
-			final InputStream is = new FileInputStream(new File(warManifest));
-			final Manifest manifest = new Manifest(is);
+			final InputStream warManifestStream = new FileInputStream(new File(warManifest));
+			final Manifest manifest = new Manifest(warManifestStream);
 
 			printManifestInfo(manifest, "WAR manifest", out, formatter);
 
@@ -243,6 +243,7 @@ public class AppVersion extends HttpServlet {
 			final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(JNDIPropertyResolver.class);
 			if(propertyResolver != null && propertyResolver instanceof JNDIPropertyResolver){
 				final JNDIPropertyResolver jndiPropRsolver = (JNDIPropertyResolver)propertyResolver;
+				
 				for(final String key : jndiPropRsolver.getJndiValuesCache().keySet()){
 					jndis.add(new JNDI(key, jndiPropRsolver.getJndiValuesCache().get(key)));
 				}
@@ -262,6 +263,7 @@ public class AppVersion extends HttpServlet {
 			final PropertyResolver propertyResolver = PropertyResolverFactory.instance().instanciateResolver(PropertyFileResolver.class);
 			if(propertyResolver != null && propertyResolver instanceof PropertyFileResolver){
 				final PropertyFileResolver filePropertyResolver = (PropertyFileResolver)propertyResolver;
+				
 				for(final String key : filePropertyResolver.getPropertiesMap().keySet()){
 					fileProperties.add(new FileProperties(key, filePropertyResolver.getPropertiesMap().get(key)));
 				}

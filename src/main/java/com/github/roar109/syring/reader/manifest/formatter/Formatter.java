@@ -20,8 +20,20 @@ public interface Formatter {
 	 */
 	String format(Manifest manifest);
 
+	/**
+	 * Formats the List of JNDI into a String suitable for output
+	 *
+	 * @param List
+	 * @return String representation of the Manifest
+	 */
 	String formatJndi(List<JNDI> jndis);
 
+	/**
+	 * Formats the List of FileProperties into a String suitable for output
+	 *
+	 * @param List
+	 * @return String representation of the Manifest
+	 */
 	String formatFileProperties(List<FileProperties> fileProperties);
 
 	/**
